@@ -1,0 +1,60 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May  7 14:44:56 2019
+
+@author: Chirag-CJ
+"""
+
+#SUPPORT VECTOR MACHINE(SVM)
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+
+#importing the dataset
+data=pd.read_csv("nerisbotnetfinal.csv")
+#taking sample from complete dataset
+data2 = data.sample(frac =.80,random_state=1,axis=0) 
+
+X=data2.iloc[ :, :-1]
+Y=data2.iloc[ :, 6]
+
+#CATEGORICAL VARIABLE
+from sklearn.preprocessing import LabelEncoder,OneHotEncoder
+labelencoder_X1=LabelEncoder()
+X['Proto']=labelencoder_X1.fit_transform(X['Proto'])
+
+labelencoder_X2=LabelEncoder()
+X['SrcAddr']=labelencoder_X2.fit_transform(X['SrcAddr'])
+
+
+labelencoder_X3=LabelEncoder()
+X['DstAddr']=labelencoder_X1.fit_transform(X['DstAddr'])
+
+
+labelencoder_Y=LabelEncoder()
+Y=labelencoder_Y.fit_transform(Y)
+
+
+#splitting the dataset into training set and test set
+from sklearn.model_selection import train_test_split
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.3,random_state=0)
+
+# Feature Scaling
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+#fitting simple SVM  to the test and training set
+from sklearn.svm import SVC
+classifier=SVC(kernel='linear',random_state=0)
+classifier.fit(X_train,Y_train)
+
+
+#predicting the Test set results
+Y_pred = classifier.predict(X_test)
+
+
+# Making the Confusion Matrix
+from sklearn.metrics import confusion_matrix
+cm = confusion_matrix(Y_test, Y_pred)
